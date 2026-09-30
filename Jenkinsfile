@@ -43,11 +43,19 @@ pipeline {
                 sh 'mvn package -DskipTests'
             }
         }
+
+        stage('Nexus Deployment') {
+            steps {
+                sh 'mvn deploy -DskipTests'
+            }
+        }
     }
 
     post {
+
         success {
             echo 'Pipeline completed successfully!'
+            echo 'Artifact deployed to Nexus successfully!'
         }
 
         failure {
@@ -59,5 +67,4 @@ pipeline {
         }
     }
 }
-
 
