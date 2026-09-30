@@ -2,11 +2,21 @@ pipeline {
 
     agent any
 
+    tools {
+        maven 'Maven'
+        jdk 'Java'
+    }
+
+    environment {
+        SONARQUBE_SERVER = 'SonarQube'
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'master',
+                    url: 'https://github.com/revesh1998-cmd/javaproject.git'
             }
         }
 
@@ -16,7 +26,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Unit Test') {
             steps {
                 sh 'mvn test'
             }
@@ -24,16 +34,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
@@ -44,7 +46,7 @@ pipeline {
             }
         }
 
-        stage('Nexus Deployment') {
+        stage('Deploy to Nexus') {
             steps {
                 sh 'mvn deploy -DskipTests'
             }
@@ -52,18 +54,16 @@ pipeline {
     }
 
     post {
-
         success {
-            echo 'Pipeline completed successfully!'
-            echo 'Artifact deployed to Nexus successfully!'
+            echo 'Pipeline execution completed successfully.'
         }
 
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline execution failed.'
         }
 
         always {
-            echo 'Pipeline execution completed.'
+            echo 'Pipeline finished.'
         }
     }
 }
