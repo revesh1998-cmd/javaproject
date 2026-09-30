@@ -1,15 +1,22 @@
 pipeline {
+
     agent any
 
     stages {
 
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                sh 'mvn clean compile'
+                checkout scm
             }
         }
 
-        stage('Unit Test') {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
@@ -18,9 +25,27 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=my-java-app'
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                 }
             }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
