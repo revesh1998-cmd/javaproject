@@ -2,11 +2,6 @@ pipeline {
 
     agent any
 
-    tools {
-        maven 'Maven'
-        jdk 'Java'
-    }
-
     environment {
         SONARQUBE_SERVER = 'SonarQube'
     }
