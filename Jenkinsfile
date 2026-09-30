@@ -12,7 +12,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean compile'
             }
         }
 
@@ -32,9 +32,15 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
+                timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests'
             }
         }
     }
@@ -47,5 +53,11 @@ pipeline {
         failure {
             echo 'Pipeline failed!'
         }
+
+        always {
+            echo 'Pipeline execution completed.'
+        }
     }
 }
+
+
