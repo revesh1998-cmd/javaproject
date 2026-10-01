@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_SERVER = 'SonarQube'
+        SONARQUBE_SERVER = 'Sonarqube'
     }
 
     stages {
@@ -35,6 +35,14 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Package') {
             steps {
                 sh 'mvn package -DskipTests'
@@ -49,6 +57,7 @@ pipeline {
     }
 
     post {
+
         success {
             echo 'Pipeline execution completed successfully.'
         }
