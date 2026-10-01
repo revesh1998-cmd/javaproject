@@ -10,3 +10,31 @@ public class App {
         return a + b;
     }
 }
+momoomom
+
+    iin
+    nini
+    niin
+    nni
+    ninini
+    nini
+    nini
+    nii
+    nini
+    ninini
+    nini
+    ninnini
+    ninni
+    ninini
+    nininini
+    nininini
+    ninininini
+    nininnini
+    niinnini
+    nininini
+    ninnini
+    nninini
+    nininini
+    nininini
+    nnininini
+    ninnini
